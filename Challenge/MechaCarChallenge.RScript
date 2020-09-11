@@ -1,0 +1,40 @@
+# load in our libraries
+library(tidyverse)
+
+# laod our csv files
+mechacar <- read.csv("MechaCar_mpg.csv", header=TRUE, sep=',')
+suspension <- read.csv("Suspension_Coil.csv", header=TRUE, sep=',')
+
+# Mechacar
+
+# multiple linear model
+model <- lm(mpg ~ vehicle.length + vehicle.weight + spoiler.angle + ground.clearance + AWD, mechacar)
+model_summary <- summary(model)
+
+# predicted mpg based onour multiple linear model
+mlm <- model$coefficients['vehicle.length']*mechacar$vehicle.length + model$coefficients['vehicle.weight']*mechacar$vehicle.weight + model$coefficients['spoiler.angle']*mechacar$spoiler.angle + model$coefficients['ground.clearance']*mechacar$ground.clearance + model$coefficients['AWD']*mechacar$AWD + model$coefficients['(Intercept)']
+
+# suspension
+
+# splitting up suspension data by manufacuring lots
+lot1 <- subset(suspension, Manufacturing_Lot=="Lot1")
+lot2 <- subset(suspension, Manufacturing_Lot=="Lot2")
+lot3 <- subset(suspension, Manufacturing_Lot=="Lot3")
+
+# building a summary table for each lot
+lot1_summary <- summarise(Mean = mean(PSI), Median = median(PSI), Variance = var(PSI), STD = sd(PSI), lot1)
+lot2_summary <- summarise(Mean = mean(PSI), Median = median(PSI), Variance = var(PSI), STD = sd(PSI), lot2)
+lot3_summary <- summarise(Mean = mean(PSI), Median = median(PSI), Variance = var(PSI), STD = sd(PSI), lot3)
+
+lot1_summary
+lot2_summary
+lot3_summary
+
+# perform a t.test for each lot against the population mean of 1,500 PSI
+lot1_ttest <- t.test(lot1$PSI, mu = 1500)
+lot2_ttest <- t.test(lot2$PSI, mu = 1500)
+lot3_ttest <- t.test(lot3$PSI, mu = 1500)
+
+lot1_ttest
+lot2_ttest
+lot3_ttest
